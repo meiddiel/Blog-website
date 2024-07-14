@@ -18,26 +18,26 @@ app.use(express.static("public"));
 
 let posts = [];
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.render('home', {
     startingContent: homeStartingContent,
     postsContent: posts
   });
 });
 
-app.get("/about", function(req, res) {
+app.get("/about", function (req, res) {
   res.render('about', { aboutContent: aboutContent });
 });
 
-app.get("/contact", function(req, res) {
+app.get("/contact", function (req, res) {
   res.render('contact', { contactContent: contactContent });
 });
 
-app.get("/compose", function(req, res) {
+app.get("/compose", function (req, res) {
   res.render('compose');
 });
 
-app.post("/compose", function(req, res) {
+app.post("/compose", function (req, res) {
   const composition = {
     title: req.body.postTitle,
     content: req.body.postContent
@@ -49,8 +49,14 @@ app.post("/compose", function(req, res) {
 
 })
 
-app.get('/posts/:postName', function(req, res) {
-  console.log(req.params.postName);
+app.get('/posts/:postName', function (req, res) {
+  const requestedTitle = req.params.postName;
+  posts.forEach(function (post) {
+    const storedTitle = post.title;
+    if (requestedTitle === storedTitle) {
+      console.log('Match found!');
+    }
+  });
 })
 
 
@@ -61,6 +67,6 @@ app.get('/posts/:postName', function(req, res) {
 
 
 
-app.listen(port, function() {
+app.listen(port, function () {
   console.log("Server started on port " + port);
 });
