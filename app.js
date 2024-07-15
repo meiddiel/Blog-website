@@ -55,6 +55,8 @@ app.get('/posts/:postName', function (req, res) {
     const storedTitle = post.title;
     if (requestedTitle === storedTitle) {
       console.log('Match found!');
+    } else {
+      console.log('Not a Match');
     }
   });
 })
