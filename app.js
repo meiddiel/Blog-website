@@ -2,20 +2,29 @@
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const ejs = require("ejs");
+const mongoose = require("mongoose");
 const _ = require("lodash");
-const port = 3000;
-
-const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
-const aboutContent = "I'm RARIVOARISOA Toky Mickael and what you are seeing now is my First blog page. Dont expect anything from this web site, It's only purpose is for the understanding of web development. Actually, I'm a web developer student. I dont have many project and just wanna improve my programing skills. The roadmap will be long and sometimes difficulte and borring but I assume that I will enjoy my journey. I hope, i will become full flage web developer and work on a big project that will change the world";
-const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
 const app = express();
+const port = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+mongoose.connect("mongodb://localhost:27017/blogBD", {useNewUrlParser:true});
+
+const postSchema = new mongoose.Schema({
+  title : String,
+  content : String
+});
+
+const Post = mongoose.model("Post", postSchema);
+
+const homeStartingContent = "Lacus vel facilisis volutpat est velit egestas dui id ornare. Semper auctor neque vitae tempus quam. Sit amet cursus sit amet dictum sit amet justo. Viverra tellus in hac habitasse. Imperdiet proin fermentum leo vel orci porta. Donec ultrices tincidunt arcu non sodales neque sodales ut. Mattis molestie a iaculis at erat pellentesque adipiscing. Magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies. Adipiscing elit ut aliquam purus sit amet luctus venenatis lectus. Ultrices vitae auctor eu augue ut lectus arcu bibendum at. Odio euismod lacinia at quis risus sed vulputate odio ut. Cursus mattis molestie a iaculis at erat pellentesque adipiscing.";
+const aboutContent = "I'm RARIVOARISOA Toky Mickael and what you are seeing now is my First blog page. Dont expect anything from this web site, It's only purpose is for the understanding of web development. Actually, I'm a web developer student. I dont have many project and just wanna improve my programing skills. The roadmap will be long and sometimes difficulte and borring but I assume that I will enjoy my journey. I hope, i will become full flage web developer and work on a big project that will change the world";
+const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rhoncus urna neque viverra justo nec ultrices. Arcu dui vivamus arcu felis bibendum. Consectetur adipiscing elit duis tristique. Risus viverra adipiscing at in tellus integer feugiat. Sapien nec sagittis aliquam malesuada bibendum arcu vitae. Consequat interdum varius sit amet mattis. Iaculis nunc sed augue lacus. Interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit. Pulvinar elementum integer enim neque. Ultrices gravida dictum fusce ut placerat orci nulla. Mauris in aliquam sem fringilla ut morbi tincidunt. Tortor posuere ac ut consequat semper viverra nam libero.";
 
 let posts = [];
 
@@ -39,16 +48,16 @@ app.get("/compose", function(req, res) {
 });
 
 app.post("/compose", function(req, res) {
-  const composition = {
+  const post = new Post({
     title: req.body.postTitle,
     content: req.body.postContent
-  };
+  });
 
-  posts.push(composition);
+  post.save();
 
   res.redirect("/")
 
-})
+});
 
 app.get('/posts/:postName', function(req, res) {
   const requestedTitle = _.lowerCase(req.params.postName);
