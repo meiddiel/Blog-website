@@ -50,22 +50,25 @@ app.get("/compose", function (req, res) {
   res.render('compose');
 });
 
-app.post("/compose", function (req, res) {
-  const composition = new Post({
-    title: req.body.postTitle,
-    content: req.body.postContent
-  });
+app.post("/compose", async function (req, res) {
+  if (!req.body.postTitle || !req.body.postContent) {
+    return res.status(400).send("Title and content are required");
+  }
 
-  composition.save()
-    .then(function () {
-      console.log("Successfuly saved")
-    })
-    .catch(function () {
-      console.log("Error")
+  try {
+    const composition = new Post({
+      title: req.body.postTitle,
+      content: req.body.postContent
     });
 
-  res.redirect("/")
+    await composition.save();
 
+    console.log("Successfully saved!");
+    res.redirect("/");
+  } catch (error) {
+    console.log("Error: ", error)
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 app.get('/posts/:postName', function (req, res) {
