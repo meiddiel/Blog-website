@@ -75,7 +75,7 @@ app.get("/posts/:postId", async function (req, res) {
   const requestedTitle = req.params.postId;
 
   try {
-    const post = await Post.findById({ requestedTitle })
+    const post = await Post.findOne({ _id: requestedTitle });
     console.log("Match found!");
     res.render("post", {
       pTitle: post.title,
