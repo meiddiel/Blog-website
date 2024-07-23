@@ -28,14 +28,14 @@ const contactContent = "Scelerisque eleifend donec pretium vulputate sapien. Rho
 
 app.get("/", function (req, res) {
   Post.find({})
-    .then (function(posts){
-    res.render('home', {
-      startingContent: homeStartingContent,
-      postsContent: posts
+    .then(function (posts) {
+      res.render('home', {
+        startingContent: homeStartingContent,
+        postsContent: posts
+      });
+    }).catch(function (error) {
+      console.log(error);
     });
-  }).catch(function(error){
-    console.log(error);
-  });
 });
 
 app.get("/about", function (req, res) {
@@ -71,23 +71,21 @@ app.post("/compose", async function (req, res) {
   }
 });
 
-app.get('/posts/:postName', function (req, res) {
-  const requestedTitle = _.lowerCase(req.params.postName);
-  posts.forEach(function (post) {
-    const storedTitle = _.lowerCase(post.title);
-    if (requestedTitle === storedTitle) {
-      console.log('Match found!');
-      res.render('post', {
-        pTitle: post.title,
-        pContent: post.content
-      });
-    } else {
-      console.log('Not a Match');
-    }
-  });
+app.get("/posts/:postId", async function (req, res) {
+  const requestedTitle = req.params.postId;
+
+  try {
+    const post = await Post.findById({ requestedTitle })
+    console.log("Match found!");
+    res.render("post", {
+      pTitle: post.title,
+      pContent: post.content
+    });
+  } catch (error) {
+    console.error("Error fetching posts: ", error);
+    res.status(500).send("Internal Server Error");
+  }
 })
-
-
 
 
 
